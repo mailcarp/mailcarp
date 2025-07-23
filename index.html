@@ -63,9 +63,9 @@
       background: white;
       padding: 10px;
       border: 1px solid #ccc;
+      display: none;
       z-index: 1000;
       text-align: left;
-      display: none;
     }
 
     .dark-mode #cart {
@@ -74,19 +74,24 @@
       border-color: #444;
     }
 
-    input[type="text"] {
-      padding: 8px;
-      margin-top: 10px;
-      width: 100%;
+    footer {
+      margin-top: 50px;
+      font-size: 14px;
     }
 
-    .total {
-      font-weight: bold;
-      margin-top: 10px;
+    footer a {
+      color: navy;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+
+    .dark-mode footer a {
+      color: #ffc107;
     }
   </style>
 </head>
 <body>
+  <!-- Tryb ciemny -->
   <button class="toggle-button" onclick="toggleDarkMode()">🌙 Tryb ciemny</button>
 
   <!-- Koszyk -->
@@ -97,31 +102,33 @@
   <div id="cart">
     <h3>Twój koszyk:</h3>
     <ul id="cart-items"></ul>
-    <div class="total" id="total-price">Łącznie: 0 zł</div>
-    <input type="text" id="adres" placeholder="Wpisz adres do wysyłki">
-    <button onclick="zamow()">Zamów i zapłać BLIK</button>
+    <p id="total">Łączna kwota: 0 zł</p>
+    <button onclick="przejdzDoKoszyka()">Przejdź do koszyka</button>
   </div>
 
   <h1>SIEMKA!</h1>
   <p>TANIE PRZYPONY</p>
 
-  <!-- Produkt 1 -->
   <div class="product">
-    <h2>SlipDRig</h2>
+    <h2>SlipDRig - 7zł</h2>
     <img src="slipdrig.png" alt="SlipDRig" width="300">
     <br>
     <a href="produkt.html"><button>Zobacz produkt</button></a>
-    <button onclick="addToCart('SlipDRig', 7)">Dodaj do koszyka (7 zł)</button>
+    <button onclick="addToCart('SlipDRig', 7)">Dodaj do koszyka</button>
   </div>
 
-  <!-- Produkt 2 -->
   <div class="product">
-    <h2>Drig</h2>
+    <h2>Drig - 7zł</h2>
     <img src="drig.png" alt="Drig" width="300">
     <br>
     <a href="produkt2.html"><button>Zobacz produkt</button></a>
-    <button onclick="addToCart('Drig', 7)">Dodaj do koszyka (7 zł)</button>
+    <button onclick="addToCart('Drig', 7)">Dodaj do koszyka</button>
   </div>
+
+  <footer>
+    <a href="regulamin.html">Regulamin</a> | 
+    <a href="polityka.html">Polityka prywatności</a>
+  </footer>
 
   <script>
     function toggleDarkMode() {
@@ -134,57 +141,33 @@
       updateCartDisplay();
     }
 
-    let cart = JSON.parse(localStorage.getItem("koszyk")) || [];
-
-    function addToCart(name, price) {
-      cart.push({ name, price });
-      localStorage.setItem("koszyk", JSON.stringify(cart));
-      alert(name + " dodany do koszyka!");
+    function addToCart(nazwa, cena) {
+      let koszyk = JSON.parse(localStorage.getItem("koszyk")) || [];
+      koszyk.push({ nazwa, cena });
+      localStorage.setItem("koszyk", JSON.stringify(koszyk));
+      alert(nazwa + " został dodany do koszyka!");
       updateCartDisplay();
     }
 
     function updateCartDisplay() {
+      let koszyk = JSON.parse(localStorage.getItem("koszyk")) || [];
       const cartList = document.getElementById("cart-items");
-      const totalDiv = document.getElementById("total-price");
+      const total = document.getElementById("total");
       cartList.innerHTML = "";
-      let total = 0;
+      let suma = 0;
 
-      cart.forEach((item, index) => {
+      koszyk.forEach(item => {
         const li = document.createElement("li");
-        li.textContent = `${item.name} - ${item.price} zł`;
-
-        const removeBtn = document.createElement("button");
-        removeBtn.textContent = "Usuń";
-        removeBtn.style.marginLeft = "10px";
-        removeBtn.onclick = function () {
-          cart.splice(index, 1);
-          localStorage.setItem("koszyk", JSON.stringify(cart));
-          updateCartDisplay();
-        };
-
-        li.appendChild(removeBtn);
+        li.textContent = item.nazwa + " - " + item.cena + " zł";
         cartList.appendChild(li);
-        total += item.price;
+        suma += item.cena;
       });
 
-      totalDiv.textContent = `Łącznie: ${total} zł`;
+      total.textContent = "Łączna kwota: " + suma + " zł";
     }
 
-    function zamow() {
-      const adres = document.getElementById("adres").value.trim();
-      if (cart.length === 0) {
-        alert("Koszyk jest pusty!");
-        return;
-      }
-      if (!adres) {
-        alert("Wpisz adres wysyłki!");
-        return;
-      }
-      alert("Zamówienie złożone!\nAdres: " + adres + "\nDziękujemy za zakupy!");
-      cart = [];
-      localStorage.removeItem("koszyk");
-      updateCartDisplay();
-      document.getElementById("adres").value = "";
+    function przejdzDoKoszyka() {
+      window.location.href = "koszyk.html";
     }
   </script>
 </body>
