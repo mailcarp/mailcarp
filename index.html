@@ -8,15 +8,12 @@
       font-family: Arial, sans-serif;
       background-color: lightblue;
       color: navy;
-      transition: 0.3s;
       text-align: center;
     }
-
     .dark-mode {
       background-color: #111;
       color: #eee;
     }
-
     button {
       padding: 10px 20px;
       margin: 10px;
@@ -26,12 +23,10 @@
       border-radius: 5px;
       background-color: #ffc107;
     }
-
     .dark-mode button {
       background-color: #333;
       color: white;
     }
-
     .product {
       border: 1px solid #ccc;
       padding: 15px;
@@ -40,86 +35,23 @@
       border-radius: 10px;
       background-color: white;
     }
-
     .dark-mode .product {
       background-color: #222;
       border-color: #444;
     }
-
-    .toggle-button {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-    }
-
-    #cart {
-      position: fixed;
-      top: 50px;
-      left: 10px;
-      background: white;
-      padding: 10px;
-      border: 1px solid #ccc;
-      display: none;
-      z-index: 1000;
-      text-align: left;
-    }
-
-    .dark-mode #cart {
-      background: #222;
-      color: #eee;
-      border-color: #444;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 9999;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.8);
-    }
-
-    .modal-content {
-      background-color: white;
-      margin: 10% auto;
-      padding: 20px;
-      width: 80%;
-      max-width: 600px;
-      border-radius: 10px;
-      color: black;
-    }
-
-    .close {
-      color: red;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
     .footer {
-      margin-top: 50px;
+      margin-top: 40px;
+    }
+    .footer a {
+      color: inherit;
+      text-decoration: underline;
+      margin: 0 10px;
     }
   </style>
 </head>
 <body>
-  <!-- Tryb ciemny -->
   <button class="toggle-button" onclick="toggleDarkMode()">🌙 Tryb ciemny</button>
-
-  <!-- Koszyk -->
-  <div style="position: fixed; top: 10px; left: 10px;">
-    <button onclick="toggleCart()">🛒 Koszyk</button>
-  </div>
-
-  <div id="cart">
-    <h3>Twój koszyk:</h3>
-    <ul id="cart-items"></ul>
-    <p id="cart-total"></p>
-    <button onclick="placeOrder()">Zamów</button>
-  </div>
+  <a href="koszyk.html"><button>🛒 Koszyk</button></a>
 
   <h1>SIEMKA!</h1>
   <p>TANIE PRZYPONY</p>
@@ -128,38 +60,19 @@
     <h2>SlipDRig – 7zł</h2>
     <img src="slipdrig.png" alt="SlipDRig" width="300">
     <br>
-    <a href="produkt.html"><button>Zobacz produkt</button></a>
-    <button onclick="addToCart('SlipDRig', 7)">Dodaj do koszyka</button>
+    <button onclick="addToCart('SlipDRig')">Dodaj do koszyka</button>
   </div>
 
   <div class="product">
     <h2>Drig – 7zł</h2>
     <img src="drig.png" alt="Drig" width="300">
     <br>
-    <a href="produkt2.html"><button>Zobacz produkt</button></a>
-    <button onclick="addToCart('Drig', 7)">Dodaj do koszyka</button>
+    <button onclick="addToCart('Drig')">Dodaj do koszyka</button>
   </div>
 
   <div class="footer">
-    <button onclick="openModal('regulamin')">Regulamin</button>
-    <button onclick="openModal('polityka')">Polityka prywatności</button>
-  </div>
-
-  <!-- Modale -->
-  <div id="regulamin" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal('regulamin')">&times;</span>
-      <h2>Regulamin</h2>
-      <p>Tu wpisz swój regulamin sklepu – np. zasady zakupów, reklamacji, zwrotów itd.</p>
-    </div>
-  </div>
-
-  <div id="polityka" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal('polityka')">&times;</span>
-      <h2>Polityka prywatności</h2>
-      <p>Tu wpisz swoją politykę prywatności – jak przechowujesz dane klientów, kto ma do nich dostęp itd.</p>
-    </div>
+    <a href="regulamin.html">Regulamin</a> | 
+    <a href="polityka.html">Polityka prywatności</a>
   </div>
 
   <script>
@@ -167,71 +80,12 @@
       document.body.classList.toggle("dark-mode");
     }
 
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    function addToCart(product, price) {
-      cart.push({ name: product, price: price });
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartDisplay();
-      alert(product + " dodany do koszyka!");
+    function addToCart(productName) {
+      let cart = JSON.parse(localStorage.getItem("koszyk")) || [];
+      cart.push(productName);
+      localStorage.setItem("koszyk", JSON.stringify(cart));
+      alert(productName + " został dodany do koszyka!");
     }
-
-    function updateCartDisplay() {
-      const list = document.getElementById("cart-items");
-      const total = document.getElementById("cart-total");
-      list.innerHTML = "";
-      let sum = 0;
-
-      cart.forEach((item, index) => {
-        const li = document.createElement("li");
-        li.textContent = `${item.name} – ${item.price} zł`;
-
-        const btn = document.createElement("button");
-        btn.textContent = "Usuń";
-        btn.onclick = () => {
-          cart.splice(index, 1);
-          localStorage.setItem("cart", JSON.stringify(cart));
-          updateCartDisplay();
-        };
-
-        li.appendChild(btn);
-        list.appendChild(li);
-        sum += item.price;
-      });
-
-      total.textContent = "Łącznie: " + sum + " zł";
-    }
-
-    function toggleCart() {
-      const cartBox = document.getElementById("cart");
-      cartBox.style.display = cartBox.style.display === "none" ? "block" : "none";
-      updateCartDisplay();
-    }
-
-    function placeOrder() {
-      if (cart.length === 0) {
-        alert("Koszyk jest pusty!");
-        return;
-      }
-
-      const address = prompt("Podaj adres dostawy:");
-      if (address) {
-        alert("Dziękujemy za zamówienie!\nWyślemy na adres: " + address + "\nPłatność: BLIK");
-        cart = [];
-        localStorage.setItem("cart", JSON.stringify(cart));
-        updateCartDisplay();
-      }
-    }
-
-    function openModal(id) {
-      document.getElementById(id).style.display = "block";
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).style.display = "none";
-    }
-
-    updateCartDisplay();
   </script>
 </body>
 </html>
