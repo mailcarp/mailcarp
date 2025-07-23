@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Sklep</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: lightblue;
+      text-align: center;
+    }
+    .product {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 20px auto;
+      max-width: 400px;
+    }
+    img {
+      width: 300px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #ffc107;
+      cursor: pointer;
+    }
+    .koszyk-btn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="koszyk-btn">
+    <button onclick="location.href='koszyk.html'">🛒 Koszyk</button>
+  </div>
+
+  <h1>SIEMKA!</h1>
+  <p>TANIE PRZYPONY</p>
+
+  <div class="product">
+    <h2>SlipDRig</h2>
+    <img src="slipdrig.png" alt="SlipDRig">
+    <br>
+    <button onclick="addToCart('SlipDRig', 7)">Dodaj do koszyka</button>
+  </div>
+
+  <div class="product">
+    <h2>Drig</h2>
+    <img src="drig.png" alt="Drig">
+    <br>
+    <button onclick="addToCart('Drig', 7)">Dodaj do koszyka</button>
+  </div>
+
+  <script>
+    function addToCart(name, price) {
+      let cart = JSON.parse(localStorage.getItem('koszyk')) || [];
+
+      // Sprawdź czy już istnieje taki produkt
+      let found = cart.find(p => p.nazwa === name);
+      if (found) {
+        found.ilosc += 1;
+      } else {
+        cart.push({ nazwa: name, cena: price, ilosc: 1 });
+      }
+
+      localStorage.setItem('koszyk', JSON.stringify(cart));
+      alert(`${name} dodano do koszyka.`);
+    }
+  </script>
+</body>
+</html>
+
+
