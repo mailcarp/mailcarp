@@ -75,13 +75,41 @@
     }
 
     footer {
-      margin-top: 50px;
-      padding: 20px;
-      background-color: #f8f9fa;
+      margin-top: 40px;
     }
 
-    .dark-mode footer {
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 10px;
+    }
+
+    .modal-close {
+      float: right;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .dark-mode .modal-content {
       background-color: #222;
+      color: #eee;
+      border-color: #444;
     }
   </style>
 </head>
@@ -97,30 +125,48 @@
   <div id="cart">
     <h3>Twój koszyk:</h3>
     <ul id="cart-items"></ul>
-    <p><strong>Łączna kwota: <span id="total">0</span> zł</strong></p>
-    <button onclick="zlozZamowienie()">Zamawiam</button>
   </div>
 
   <h1>SIEMKA!</h1>
   <p>TANIE PRZYPONY</p>
 
   <div class="product">
-    <h2>SlipDRig - 7zł</h2>
+    <h2>SlipDRig - 7 zł</h2>
     <img src="slipdrig.png" alt="SlipDRig" width="300">
     <br>
-    <button onclick="addToCart('SlipDRig', 7)">Dodaj do koszyka</button>
+    <a href="produkt.html"><button>Zobacz produkt</button></a>
+    <button onclick="addToCart('SlipDRig - 7 zł')">Dodaj do koszyka</button>
   </div>
 
   <div class="product">
-    <h2>Drig - 7zł</h2>
+    <h2>Drig - 7 zł</h2>
     <img src="drig.png" alt="Drig" width="300">
     <br>
-    <button onclick="addToCart('Drig', 7)">Dodaj do koszyka</button>
+    <a href="produkt2.html"><button>Zobacz produkt</button></a>
+    <button onclick="addToCart('Drig - 7 zł')">Dodaj do koszyka</button>
   </div>
 
   <footer>
-    <p><a href="#">Regulamin</a> | <a href="#">Polityka prywatności</a></p>
+    <button type="button" onclick="showModal('regulaminModal')">Regulamin</button>
+    <button type="button" onclick="showModal('politykaModal')">Polityka prywatności</button>
   </footer>
+
+  <!-- Modale -->
+  <div id="regulaminModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="hideModal('regulaminModal')">&times;</span>
+      <h2>Regulamin</h2>
+      <p>To przykładowy regulamin sklepu. Użytkownik zobowiązuje się do uczciwego korzystania z serwisu.</p>
+    </div>
+  </div>
+
+  <div id="politykaModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="hideModal('politykaModal')">&times;</span>
+      <h2>Polityka prywatności</h2>
+      <p>Twoje dane są bezpieczne i nie będą udostępniane osobom trzecim.</p>
+    </div>
+  </div>
 
   <script>
     function toggleDarkMode() {
@@ -129,26 +175,20 @@
 
     let cart = [];
 
-    function addToCart(name, price) {
-      cart.push({ name, price });
-      alert(name + " dodano do koszyka!");
+    function addToCart(productName) {
+      cart.push(productName);
+      alert(productName + " został dodany do koszyka!");
       updateCartDisplay();
     }
 
     function updateCartDisplay() {
       const cartList = document.getElementById("cart-items");
-      const totalEl = document.getElementById("total");
       cartList.innerHTML = "";
-      let total = 0;
-
       cart.forEach(item => {
         const li = document.createElement("li");
-        li.textContent = item.name + " - " + item.price + " zł";
+        li.textContent = item;
         cartList.appendChild(li);
-        total += item.price;
       });
-
-      totalEl.textContent = total;
     }
 
     function toggleCart() {
@@ -156,18 +196,12 @@
       cartDiv.style.display = cartDiv.style.display === "none" ? "block" : "none";
     }
 
-    function zlozZamowienie() {
-      if (cart.length === 0) {
-        alert("Koszyk jest pusty!");
-        return;
-      }
+    function showModal(id) {
+      document.getElementById(id).style.display = "block";
+    }
 
-      let adres = prompt("Podaj adres wysyłki:");
-      if (!adres) return;
-
-      alert("Dziękujemy za zamówienie! Szczegóły wysłane na: " + adres + "\nZapłać Blikiem: 123-456");
-      cart = [];
-      updateCartDisplay();
+    function hideModal(id) {
+      document.getElementById(id).style.display = "none";
     }
   </script>
 </body>
