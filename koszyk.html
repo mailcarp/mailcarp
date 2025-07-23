@@ -2,76 +2,122 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Sklep</title>
+  <title>Koszyk</title>
   <style>
     body {
+      background-color: #111;
+      color: #eee;
       font-family: Arial, sans-serif;
-      background-color: lightblue;
       text-align: center;
     }
-    .product {
-      background: white;
-      border-radius: 10px;
-      padding: 15px;
-      margin: 20px auto;
+    .koszyk {
+      background-color: #222;
+      padding: 20px;
+      margin: 30px auto;
       max-width: 400px;
-    }
-    img {
-      width: 300px;
+      border-radius: 10px;
     }
     button {
-      margin-top: 10px;
+      margin-top: 15px;
       padding: 10px 20px;
       font-size: 16px;
+      background-color: #ffc107;
       border: none;
       border-radius: 5px;
-      background-color: #ffc107;
       cursor: pointer;
     }
-    .koszyk-btn {
-      position: fixed;
-      top: 10px;
-      left: 10px;
+    .usun {
+      background-color: crimson;
+      color: white;
+      margin-left: 10px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 10px 0;
+    }
+    input[type="text"] {
+      padding: 10px;
+      margin-top: 15px;
+      width: 80%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .suma {
+      font-weight: bold;
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
-  <div class="koszyk-btn">
-    <button onclick="location.href='koszyk.html'">🛒 Koszyk</button>
-  </div>
+  <div class="koszyk">
+    <h2>Twój koszyk:</h2>
+    <ul id="lista"></ul>
+    <p class="suma">Łącznie: <span id="suma">0</span> zł</p>
 
-  <h1>SIEMKA!</h1>
-  <p>TANIE PRZYPONY</p>
-
-  <div class="product">
-    <h2>SlipDRig</h2>
-    <img src="slipdrig.png" alt="SlipDRig">
-    <br>
-    <button onclick="addToCart('SlipDRig', 7)">Dodaj do koszyka</button>
-  </div>
-
-  <div class="product">
-    <h2>Drig</h2>
-    <img src="drig.png" alt="Drig">
-    <br>
-    <button onclick="addToCart('Drig', 7)">Dodaj do koszyka</button>
+    <input type="text" id="adres" placeholder="Podaj adres dostawy"><br>
+    <button onclick="zaplac()">Zapłać BLIK</button>
   </div>
 
   <script>
-    function addToCart(name, price) {
-      let cart = JSON.parse(localStorage.getItem('koszyk')) || [];
+    const ceny = {
+      "SlipDRig": 7,
+      "Drig": 7
+    };
 
-      // Sprawdź czy już istnieje taki produkt
-      let found = cart.find(p => p.nazwa === name);
-      if (found) {
-        found.ilosc += 1;
-      } else {
-        cart.push({ nazwa: name, cena: price, ilosc: 1 });
+    let koszyk = JSON.parse(localStorage.getItem('koszyk')) || [];
+
+    function wyswietlKoszyk() {
+      const lista = document.getElementById("lista");
+      const sumaEl = document.getElementById("suma");
+      lista.innerHTML = "";
+      let suma = 0;
+
+      koszyk.forEach((produkt, index) => {
+        const li = document.createElement("li");
+        const cena = ceny[produkt] || 0;
+        suma += cena;
+
+        li.textContent = `${produkt} – ${cena} zł`;
+
+        const usunBtn = document.createElement("button");
+        usunBtn.textContent = "Usuń";
+        usunBtn.classList.add("usun");
+        usunBtn.onclick = () => {
+          koszyk.splice(index, 1);
+          localStorage.setItem("koszyk", JSON.stringify(koszyk));
+          wyswietlKoszyk();
+        };
+
+        li.appendChild(usunBtn);
+        lista.appendChild(li);
+      });
+
+      sumaEl.textContent = suma;
+    }
+
+    function zaplac() {
+      const adres = document.getElementById("adres").value.trim();
+      if (!adres) {
+        alert("Proszę podać adres dostawy.");
+        return;
       }
 
-      localStorage.setItem('koszyk', JSON.stringify(cart));
-      alert(`${name} dodano do koszyka.`);
+      if (koszyk.length === 0) {
+        alert("Koszyk jest pusty.");
+        return;
+      }
+
+      alert("Dziękujemy za zakupy! Twoje zamówienie zostanie wysłane na: " + adres);
+      localStorage.removeItem("koszyk");
+      koszyk = [];
+      wyswietlKoszyk();
+      document.getElementById("adres").value = "";
     }
+
+    wyswietlKoszyk();
   </script>
 </body>
 </html>
